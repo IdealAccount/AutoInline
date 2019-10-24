@@ -106,12 +106,10 @@ export default new Vuex.Store({
         let typeA = a[type].toLowerCase(),
           typeB = b[type].toLowerCase();
         if (sorted === 'ascending') {
-          if (typeA > typeB) return -1;
-          if (typeA < typeB) return 1;
+          return (typeA > typeB) ? -1 : 1;
         }
         if (sorted === 'descending') {
-          if (typeA < typeB) return -1;
-          if (typeA > typeB) return 1;
+          return (typeA < typeB) ? -1 : 1;
         }
         return 0
       })
@@ -119,6 +117,8 @@ export default new Vuex.Store({
     // Добавить сотрудника
     ADD_EMPLOYEE(state, obj) {
       state.employees.push(obj);
+      console.log(state.employees)
+      console.log(obj)
       if (!state.employees.length) obj.id = 1;
       else obj.id = state.employees.length + 1;
     },
@@ -160,6 +160,10 @@ export default new Vuex.Store({
 
   },
   actions: {
+    // открыть меню
+    toggleMenu({commit}) {
+      commit('TOGGLE_MENU')
+    },
     // добавить сотрудника
     addEmployee({commit}, obj) {
       commit('ADD_EMPLOYEE', obj)
@@ -188,6 +192,9 @@ export default new Vuex.Store({
   getters: {
     editIsActive(state) {
       return state.edit.isActive
+    },
+    reverseEmployees(state) {
+      return state.employees.reverse();
     }
   },
   plugins: [createPersistedState()]

@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app>
-    <v-app-bar-nav-icon @click.stop="$store.dispatch('toggleMenu')"></v-app-bar-nav-icon>
+    <v-app-bar-nav-icon @click=""></v-app-bar-nav-icon>
     <v-toolbar-title>{{ title }}</v-toolbar-title>
     <v-spacer></v-spacer>
     <v-btn icon>

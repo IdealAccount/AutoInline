@@ -32,6 +32,7 @@
 <script>
   import VCrud from '../components/VCrud'
   import VPagination from '../components/VPagination'
+
   export default {
     props: ['filteredEmployees'],
     components: {
@@ -56,9 +57,9 @@
     },
     computed: {
       tableData() {
-        return this.filteredEmployees.length ?
-               this.filteredEmployees.reverse() :
-               this.$store.state.employees.reverse()
+        return this.filteredEmployees ?
+          this.filteredEmployees :
+          this.$store.getters.reverseEmployees
       },
       visibleEmployees() {
         return this.tableData.slice(this.currentPage * this.perPage, (this.currentPage * this.perPage) + this.perPage)

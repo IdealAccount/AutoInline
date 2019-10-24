@@ -9,7 +9,7 @@
       <!--</li>-->
     <!--</ul>-->
     <div>
-      <span>{{current + 1}} из {{totalPages}}</span>
+      <span>{{totalPages ? current + 1 : current}} из {{totalPages}}</span>
     </div>
     <div class="pagination__right">
       <button :disabled="current + 1 >= totalPages " @click="changePage(1)">Следущая</button>
