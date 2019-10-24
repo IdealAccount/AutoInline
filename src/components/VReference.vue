@@ -69,7 +69,7 @@
           this.searchFilter.forEach(tag => {
             result = this.employees.filter((employee) => {
               if (employee[tag].toLowerCase().match(str)) {
-                return [].push(employee)
+                return employee
               }
             });
             arr.push(...result);

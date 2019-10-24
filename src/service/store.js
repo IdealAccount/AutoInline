@@ -117,8 +117,6 @@ export default new Vuex.Store({
     // Добавить сотрудника
     ADD_EMPLOYEE(state, obj) {
       state.employees.push(obj);
-      console.log(state.employees)
-      console.log(obj)
       if (!state.employees.length) obj.id = 1;
       else obj.id = state.employees.length + 1;
     },
@@ -165,7 +163,7 @@ export default new Vuex.Store({
       commit('TOGGLE_MENU')
     },
     // добавить сотрудника
-    addEmployee({commit}, obj) {
+    addEmployee({commit, dispatch}, obj) {
       commit('ADD_EMPLOYEE', obj)
     },
     // сохранить сотрудника
