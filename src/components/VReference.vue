@@ -9,18 +9,18 @@
         single-line
         hide-details
       ></v-text-field>
-      <div>
+      <div class="ml-10">
         <div><input
           id="name"
-          type="checkbox"
+          type="radio"
           v-model="searchFilter"
           value="name"
         >
-          <label for="name"> по имени</label>
+          <label for="name"> по Имени</label>
         </div>
         <div><input
           id="surname"
-          type="checkbox"
+          type="radio"
           v-model="searchFilter"
           value="surname"
         >
@@ -28,7 +28,7 @@
         </div>
         <div><input
           id="patronymic"
-          type="checkbox"
+          type="radio"
           v-model="searchFilter"
           value="patronymic"
         >
@@ -41,51 +41,28 @@
 </template>
 <script>
   import VTable from './VTable'
-  import { mapState } from 'vuex'
+  import {mapState} from 'vuex'
+
   export default {
-    components: { VTable },
+    components: {VTable},
     data() {
       return {
         search: '',
-        searchFilter: ['name'],
-        result: [],
+        searchFilter: 'name',
       }
     },
     computed: {
       ...mapState(['employees']),
       filteredEmployees() {
-        let result = [];
         if (!this.search.length) return null;
-        this.filtration(result);
-        this.sortFilter(result);
-        return result
-        // return filteredArr.reverse();
-      }
-    },
-    methods: {
-      filtration(arr) {
         let str = this.search.toLowerCase();
-        let result = [];
-          this.searchFilter.forEach(tag => {
-            result = this.employees.filter((employee) => {
-              if (employee[tag].toLowerCase().match(str)) {
-                return employee
-              }
-            });
-            arr.push(...result);
-          });
-          return arr
-      },
-      sortFilter(arr) {
-        let tag = this.searchFilter[0];
-        arr.sort((a,b) => {
-           let compareA = a[tag].toLowerCase(),
-               compareB = b[tag].toLowerCase();
-           return (compareA > compareB) ? -1 : 1;
+         return this.employees.filter((employee) => {
+            if (employee[this.searchFilter].toLowerCase().match(str)) {
+              return employee
+            }
         });
-        return arr
-      }
-    }
+      },
+    },
   }
 </script>
 

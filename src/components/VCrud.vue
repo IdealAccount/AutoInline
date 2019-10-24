@@ -30,14 +30,6 @@
     >
       <v-icon>mdi-pencil</v-icon>
     </v-btn>
-    <!--<v-btn
-      fab
-      dark
-      x-small
-      color="indigo"
-    >
-      <v-icon>mdi-plus</v-icon>
-    </v-btn>-->
     <v-btn
       fab
       dark
@@ -91,14 +83,5 @@
         this.right = !val
       },
     },
-    methods: {
-      editing() {
-        // this.
-
-      }
-    }
   }
 </script>
-
-<style scoped>
-</style>

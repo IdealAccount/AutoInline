@@ -11,6 +11,7 @@
       label="Имя"
       required
       maxlength="12"
+      autofocus
       ref="name"
     ></v-text-field>
     <v-text-field
@@ -62,11 +63,12 @@
 </template>
 
 <script>
-  import {mapState, mapGetters} from 'vuex'
+  import {mapGetters, mapState} from 'vuex'
 
   export default {
     data: () => ({
       valid: true,
+      created: {},
       employee: {},
       nameRules: [
         v => !!v || 'Обязательное поле',
@@ -80,6 +82,9 @@
       ],
       lazy: false,
     }),
+    mounted() {
+      this.getDate();
+    },
     computed: {
       ...mapState(['edit']),
       ...mapGetters(['editIsActive']),
@@ -87,15 +92,40 @@
     watch: {
       editIsActive(val) {
         if (val) {
-          console.log(val)
           this.employee = {...this.edit.obj}
         }
       }
     },
     methods: {
+      getDate() {
+        // let months = ["янв", "фев", "мар", "апр",
+        //   "мая", "июн", "июл", "авг",
+        //   "сен", "окт", "ноя", "дек"];
+
+        let date = new Date();
+
+        let dd = date.getDate();
+        if (dd < 10) dd = `0${dd}`;
+
+        let mm = date.getMonth() + 1;
+        if (mm < 10) mm = `0${mm}`;
+
+        let yy = date.getFullYear();
+
+        let hh = date.getHours();
+        if (hh < 10) hh = `0${hh}`;
+
+        let min = date.getMinutes();
+        if (min < 10) min = `0${min}`;
+        return this.created = {
+          date: `${dd}.${mm}.${yy}`,
+          time: `${hh}:${min}`
+        }
+      },
       someMethod() {
         if (this.$refs.form.validate()) {
           if (!this.editIsActive) {
+            this.employee.created = this.created;
             this.$store.dispatch('addEmployee', {...this.employee})
           } else {
             this.$store.dispatch('saveEmployee', {...this.employee})

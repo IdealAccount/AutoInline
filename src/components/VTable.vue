@@ -4,8 +4,8 @@
       <div class="v-table-col" v-for="item of headers" :key="item.id">
         {{item.text}}
         <v-btn class="v-table-sort ml-2"
-               :class="[{sorted: item.sorted}, item.sorted]"
-               @click.prevent="sort(item)"
+               :class="[{sorting: item.sorting}, item.sorting]"
+               @click.prevent="changeSortDirection(item)"
                absolute
                fab
                x-small
@@ -15,23 +15,32 @@
       </div>
     </div>
     <div class="v-table-body">
-      <div class="v-table-row" v-for="(obj,key) of visibleEmployees" :key="key">
+      <div class="v-table-row"
+           v-for="(obj,key) of visibleEmployees"
+           :key="key"
+      >
         <div class="v-table-col"
              v-for="(item,key) of obj"
              v-if="item !== obj.id"
              :key="key"
-        > {{item}}
+        > <span v-if="item.date">{{item.date}} {{item.time}}</span>
+          <span v-else>{{item}}</span>
         </div>
         <v-crud :key="obj.id" :obj="obj"></v-crud>
       </div>
+      <div v-if="!visibleEmployees.length" class="v-table-row justify-center"><span >Поиск не дал результатов</span></div>
     </div>
-    <v-pagination :perPage="perPage" :current="currentPage" :total="tableData.length"></v-pagination>
+    <v-pagination :perPage="perPage"
+                  :current="currentPage"
+                  :total="employeesList.length"
+    ></v-pagination>
   </div>
 </template>
 
 <script>
   import VCrud from '../components/VCrud'
   import VPagination from '../components/VPagination'
+  import {mapState, mapGetters} from 'vuex'
 
   export default {
     props: ['filteredEmployees'],
@@ -41,59 +50,44 @@
     },
     data() {
       return {
-        sorted: false,
-        headers: [
-          {id: 1, text: 'Имя', type: 'name', sorted: false, counter: 0},
-          {id: 2, text: 'Фамилия', type: 'surname', sorted: false, counter: 0},
-          {id: 3, text: 'Отчество', type: 'patronymic', sorted: false, counter: 0},
-          {id: 4, text: 'Должность', type: 'position', sorted: false, counter: 0},
-        ],
         perPage: 5,
         currentPage: 0,
+        header: {}
       }
     },
-    mounted() {
-      console.log(this.visibleEmployees)
-    },
     computed: {
+      ...mapGetters(['employeesList']),
+      ...mapState(['headers']),
       tableData() {
-        return this.filteredEmployees ?
-          this.filteredEmployees :
-          this.$store.getters.reverseEmployees
+        return this.filteredEmployees ? this.filteredEmployees : this.employeesList
       },
       visibleEmployees() {
         return this.tableData.slice(this.currentPage * this.perPage, (this.currentPage * this.perPage) + this.perPage)
       },
     },
     methods: {
-      sort(head) {
-        if (head.counter > 2) head.counter = 0;
-        if (this.headers.includes(head)) {
-          switch (head.counter) {
+      changeSortDirection(header) {
+        let obj = header;
+        if (obj.counter > 2) obj.counter = 0;
+        if (this.headers.includes(obj)) {
+          switch (obj.counter) {
             case 0:
-              head.sorted = 'ascending'
+              obj.sorting = 'ascending';
               break;
             case 1:
-              head.sorted = 'descending'
+              obj.sorting = 'descending';
               break;
             case 2:
-              head.sorted = false
+              obj.sorting = false;
               break;
           }
+          obj.counter++;
         }
-        this.headers.forEach(item => {
-          if (item.type !== head.type) {
-            item.counter = 0;
-            item.sorted = false;
-          }
-        });
-        this.$store.dispatch('sortEmployees', head);
-        head.counter++;
+        this.$store.dispatch('resetSortDirection', obj);
       },
     }
   }
 </script>
-
 <style lang="scss">
   .v-table {
     display: flex;
@@ -103,7 +97,7 @@
       opacity: 0;
       transition: .3s;
       background: rgba(0, 0, 0, .5);
-      &.sorted {
+      &.sorting {
         opacity: 1;
         background: #212312;
       }
@@ -137,13 +131,23 @@
       &:nth-child(odd) {
         background: rgba(155, 155, 155, .2);
       }
+      & .v-btn {
+        opacity: 0;
+
+      }
+      &:hover .v-btn {
+        opacity: .7;
+        &:hover {
+          opacity: 1;
+        }
+      }
     }
     &-headers,
     &-body {
       width: 100%;
       .v-table-col {
         text-align: center;
-        max-width: 25%;
+        max-width: calc(100% / 5);
         width: 100%;
         cursor: pointer;
       }
