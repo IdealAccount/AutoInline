@@ -81,7 +81,7 @@
       ],
       lazy: false,
     }),
-    mounted() {
+    updated() {
       this.getDate();
     },
     computed: {
@@ -145,6 +145,8 @@
 
 <style>
   .v-form {
-    flex: 0 1 45%;
+    flex: 0 1 auto;
+    max-width: 30%;
+    width: 100%;
   }
 </style>

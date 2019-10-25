@@ -1,7 +1,7 @@
 <template>
   <v-app>
-    <v-navigation></v-navigation>
     <v-bar></v-bar>
+    <!--<v-navigation></v-navigation>-->
     <v-content @click="closeMenu">
       <viewport/>
     </v-content>

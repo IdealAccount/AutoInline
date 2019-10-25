@@ -68,6 +68,8 @@
 
 <style>
   .v-card {
-    flex: 0 1 45%;
+    flex: 1 1 auto;
+    max-width: 50%;
+    width: 100%;
   }
 </style>
