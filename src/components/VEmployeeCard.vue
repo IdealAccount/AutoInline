@@ -11,7 +11,6 @@
       label="Имя"
       required
       maxlength="12"
-      autofocus
       ref="name"
     ></v-text-field>
     <v-text-field
