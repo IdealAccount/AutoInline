@@ -3,7 +3,7 @@
     <v-navigation></v-navigation>
     <v-bar></v-bar>
     <v-content @click="closeMenu">
-      <router-view />
+      <viewport/>
     </v-content>
   </v-app>
 </template>
@@ -11,17 +11,16 @@
 <script>
   import VBar from './components/VBar'
   import VNavigation from './components/VNavigation'
+  import Viewport from './views/Viewport'
 export default {
   name: "App",
   components: {
     VBar,
-    VNavigation
+    VNavigation,
+    Viewport
   },
-  data: () => ({
-  }),
   methods: {
     closeMenu(event) {
-      console.log(event.target)
       if (!this.$store.state.drawer) return
       this.$store.dispatch('toggleMenu');
     }
