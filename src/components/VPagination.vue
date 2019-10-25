@@ -1,18 +1,27 @@
 <template>
   <div class="pagination">
     <div class="pagination__left">
-      <button :disabled="current < 1" @click="changePage(-1)">Предыдущая</button>
+      <button :disabled="stopPrev" @click="changePage(prevPage)">Предыдущая</button>
     </div>
-    <!--<ul class="pagination-list">-->
-      <!--<li class="pagination-list__item" v-for="(page, i) of pages" :class="{current: $parent.currentPage === i}">-->
-        <!--<a href="#!" @click="goToPage(i)" >{{page}}</a>-->
-      <!--</li>-->
-    <!--</ul>-->
-    <div>
-      <span>{{totalPages ? current + 1 : current}} из {{totalPages}}</span>
-    </div>
+    <ul class="pagination-list">
+      <li v-if="hasFirst" class="pagination-list__item">
+        <a href="#!" @click="changePage(1)">1</a>
+      </li>
+      <li v-if="hasFirst" class="pagination-list__ellipsis">...</li>
+      <li class="pagination-list__item"
+          v-for="(page,i) of pages"
+          :class="{current: current === page}"
+          :key="page"
+      >
+        <a href="#!" @click="changePage(page)">{{page}}</a>
+      </li>
+      <li v-if="hasLast" class="pagination-list__ellipsis">...</li>
+      <li v-if="hasLast" class="pagination-list__item">
+        <a href="#!" @click="changePage(totalPages)">{{totalPages}}</a>
+      </li>
+    </ul>
     <div class="pagination__right">
-      <button :disabled="current + 1 >= totalPages " @click="changePage(1)">Следущая</button>
+      <button :disabled="stopNext" @click="changePage(nextPage)">Следущая</button>
     </div>
   </div>
 </template>
@@ -30,46 +39,56 @@
       },
       current: {
         type: Number,
+        default: 1,
       },
       pageRange: {
         type: Number,
-        default: 3
+        default: 2
       }
     },
     computed: {
-      // pages() {
-      //   let pages = [];
-      //   for (let i = this.rangeStart; i <= this.rangeEnd; i++ ) {
-      //     pages.push(i)
-      //   }
-      //   return pages
-      // },
-      // rangeStart() {
-      //   let start = this.$parent.currentPage - this.pageRange;
-      //   return (start > 0) ? start : 1
-      // },
-      // rangeEnd() {
-      //   let end = this.$parent.currentPage + this.pageRange
-      //   return (end < this.totalPages) ? end : this.totalPages
-      // },
+      pages() {
+        let pages = [];
+        for (let i = this.rangeStart; i <= this.rangeEnd; i++) {
+          pages.push(i)
+        }
+        return pages
+      },
+      rangeStart() {
+        let start = this.current - this.pageRange;
+        return (start > 0) ? start : 1
+      },
+      rangeEnd() {
+        let end = this.current + this.pageRange;
+        return (end < this.totalPages) ? end : this.totalPages
+      },
       totalPages() {
         return Math.ceil(this.total / this.perPage)
       },
+      nextPage() {
+        return this.current + 1
+      },
+      prevPage() {
+        return this.current - 1
+      },
+      stopPrev() {
+        return this.current <= 1
+      },
+      stopNext() {
+        return this.current >= this.totalPages
+      },
+      hasFirst() {
+        return this.rangeStart !== 1
+      },
+      hasLast() {
+        return this.rangeEnd < this.totalPages
+      }
     },
     methods: {
-      changePage(direction) {
-        if (direction > 0) {
-          this.$parent.currentPage++
-        }
-        if (direction < 0) {
-          this.$parent.currentPage--
-        }
+      changePage(page) {
+        this.$emit('changePage', page)
       },
-      // goToPage(pageNum) {
-      //   this.$parent.currentPage = pageNum;
-      // }
     }
-
   }
 </script>
 
@@ -78,7 +97,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    width: 80%;
+    width: 90%;
     margin: 20px auto 0;
     &__left,
     &__right {
@@ -112,7 +131,7 @@
       padding: 0 !important;
       margin: 0 10px;
       &__item {
-        border: 1px solid rgba(0,0,0,.12);
+        border: 1px solid rgba(0, 0, 0, .12);
         margin-right: 4px;
         width: 30px;
         height: 30px;
@@ -130,6 +149,20 @@
           text-decoration: none;
         }
       }
+      &__ellipsis {
+        padding: 5px;
+        margin-right: 5px;
+        align-self: flex-end;
+      }
     }
+  }
+
+  .pagination-enter-active, .pagination-leave-active {
+    transition: all .3s;
+  }
+
+  .pagination-enter, .pagination-leave-to {
+    opacity: 0;
+    transform: translateX(-10em)
   }
 </style>

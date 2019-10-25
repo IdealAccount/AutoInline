@@ -14,25 +14,34 @@
         </v-btn>
       </div>
     </div>
+
     <div class="v-table-body">
-      <div class="v-table-row"
-           v-for="(obj,key) of visibleEmployees"
-           :key="key"
-      >
-        <div class="v-table-col"
-             v-for="(item,key) of obj"
-             v-if="item !== obj.id"
+      <transition-group name="table-row" mode="out-in">
+        <div class="v-table-row"
+             v-for="(obj,key) of visibleEmployees"
              :key="key"
-        > <span v-if="item.date">{{item.date}} {{item.time}}</span>
-          <span v-else>{{item}}</span>
+        >
+          <div class="v-table-col"
+               v-for="(item,key) of obj"
+               v-if="item !== obj.id"
+               :key="key"
+          >
+            <span v-if="item.date">{{item.date}} {{item.time}}</span>
+            <span v-else>{{item}}</span>
+          </div>
+          <v-crud :key="obj.id" :obj="obj"></v-crud>
         </div>
-        <v-crud :key="obj.id" :obj="obj"></v-crud>
-      </div>
-      <div v-if="!visibleEmployees.length" class="v-table-row justify-center"><span >Поиск не дал результатов</span></div>
+      </transition-group>
+      <transition name="show" mode="out-in">
+        <div v-if="!visibleEmployees.length" class="v-table-row justify-center">
+          <span>Поиск не дал результатов</span>
+        </div>
+      </transition>
     </div>
     <v-pagination :perPage="perPage"
                   :current="currentPage"
-                  :total="employeesList.length"
+                  :total="tableData.length"
+                  @changePage="changePage"
     ></v-pagination>
   </div>
 </template>
@@ -40,7 +49,7 @@
 <script>
   import VCrud from '../components/VCrud'
   import VPagination from '../components/VPagination'
-  import {mapState, mapGetters} from 'vuex'
+  import {mapGetters, mapState} from 'vuex'
 
   export default {
     props: ['filteredEmployees'],
@@ -51,7 +60,7 @@
     data() {
       return {
         perPage: 5,
-        currentPage: 0,
+        currentPage: 1,
         header: {}
       }
     },
@@ -62,10 +71,14 @@
         return this.filteredEmployees ? this.filteredEmployees : this.employeesList
       },
       visibleEmployees() {
-        return this.tableData.slice(this.currentPage * this.perPage, (this.currentPage * this.perPage) + this.perPage)
+        return this.tableData.slice((this.currentPage - 1) * this.perPage, ((this.currentPage - 1) * this.perPage) + this.perPage)
       },
+
     },
     methods: {
+      changePage(page) {
+        this.currentPage = page
+      },
       changeSortDirection(header) {
         let obj = header;
         if (obj.counter > 2) obj.counter = 0;
@@ -142,6 +155,9 @@
         }
       }
     }
+    &-body {
+      height: 225px;
+    }
     &-headers,
     &-body {
       width: 100%;
@@ -156,5 +172,14 @@
       width: 24px;
       height: 24px;
     }
+  }
+
+  .table-row-enter-active, .table-row-leave-active {
+    transition: all .3s;
+  }
+
+  .table-row-enter, .table-row-leave-to {
+    opacity: 0;
+    transform: translateX(10px);
   }
 </style>
