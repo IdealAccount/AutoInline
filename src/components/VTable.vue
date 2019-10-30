@@ -68,7 +68,7 @@
       ...mapGetters(['employeesList']),
       ...mapState(['headers']),
       tableData() {
-        return this.filteredEmployees ? this.filteredEmployees : this.employeesList
+        return this.filteredEmployees.length ? this.filteredEmployees : this.employeesList
       },
       visibleEmployees() {
         return this.tableData.slice((this.currentPage - 1) * this.perPage, ((this.currentPage - 1) * this.perPage) + this.perPage)

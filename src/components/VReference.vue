@@ -54,10 +54,10 @@
     computed: {
       ...mapState(['employees']),
       filteredEmployees() {
-        if (!this.search.length) return null;
+        if (!this.search.length) return [];
         let str = this.search.toLowerCase();
          return this.employees.filter((employee) => {
-            if (employee[this.searchFilter].toLowerCase().match(str)) {
+            if (employee[this.searchFilter].toLowerCase().search(str) === 0) {
               return employee
             }
         });
